@@ -9,6 +9,8 @@ import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.session.data.redis.RedisFlushMode;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
+import org.springframework.session.web.http.CookieSerializer;
+import org.springframework.session.web.http.DefaultCookieSerializer;
 
 /**
  * SpringSession配置类，用来启用RedisHttpSession功能，并向Spring容器中注册一个RedisConnectionFactory
@@ -33,7 +35,7 @@ public class SpringRedisClusterConfigFactory {
 	@Bean
 	public JedisConnectionFactory jedisConnectionFactory() {
 		JedisConnectionFactory connectionFactory = new JedisConnectionFactory();
-		connectionFactory.setHostName("10.5.2.242");
+		connectionFactory.setHostName("127.0.0.1");
 		connectionFactory.setPort(6379);
 		return connectionFactory;
 	}
@@ -49,6 +51,16 @@ public class SpringRedisClusterConfigFactory {
 		redisTemplate.setHashKeySerializer(serializer1);
 		redisTemplate.setHashValueSerializer(serializer2);
 		return redisTemplate;
+	}
+	
+	@Bean
+	public CookieSerializer cookieSerializer() {
+		DefaultCookieSerializer serializer = new DefaultCookieSerializer();
+		serializer.setCookieName("JSESSIONID"); // <1>
+		serializer.setCookiePath("/"); // <2>
+		//serializer.setDomainNamePattern("^.+?\\.(\\w+\\.[a-z]+)$"); // <3>
+		serializer.setDomainName("xxx.com");
+		return serializer;
 	}
 	
 }
